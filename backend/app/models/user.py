@@ -17,7 +17,9 @@ class User(db.Model):
     phone = db.Column(db.String(20))
     city = db.Column(db.String(64))
     country = db.Column(db.String(64))
+    country = db.Column(db.String(64))
     bio = db.Column(db.Text)
+    preferences = db.Column(db.Text) # JSON string
 
     trips = db.relationship('Trip', backref='author', lazy='dynamic')
 
@@ -38,5 +40,7 @@ class User(db.Model):
             'city': self.city,
             'country': self.country,
             'bio': self.bio,
-            'phone': self.phone
+            'bio': self.bio,
+            'phone': self.phone,
+            'preferences': self.preferences
         }

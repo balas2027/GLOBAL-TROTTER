@@ -63,7 +63,11 @@ const AuthModal = () => {
                 }
             }
         } catch (err) {
-            setError(err.response?.data?.message || err.message || "An error occurred");
+            if (err.response && err.response.status === 401) {
+                setError("Invalid email or password. Please try again.");
+            } else {
+                setError(err.response?.data?.message || err.message || "An error occurred");
+            }
         } finally {
             setLoading(false);
         }

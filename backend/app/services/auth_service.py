@@ -62,6 +62,7 @@ class AuthService:
         if 'bio' in data: user.bio = data['bio']
         if 'avatar_url' in data: user.avatar_url = data['avatar_url']
         if 'phone' in data: user.phone = data['phone']
+        if 'preferences' in data: user.preferences = data['preferences']
         
         db.session.commit()
         return user

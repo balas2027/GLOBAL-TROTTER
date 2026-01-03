@@ -41,7 +41,7 @@ export const getProfile = async () => {
   } catch (error) {
     if (error.response && (error.response.status === 401 || error.response.status === 422)) {
       logout();
-      window.location.href = '/login';
+      // Redirect handled by UI state
     }
     throw error;
   }
@@ -59,7 +59,7 @@ export const updateProfile = async (userData) => {
   } catch (error) {
      if (error.response && (error.response.status === 401 || error.response.status === 422)) {
       logout();
-      window.location.href = '/login';
+      // Redirect handled by UI state
     }
     throw error;
   }
