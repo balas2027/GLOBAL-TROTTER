@@ -7,6 +7,8 @@ import UserProfilePage from './pages/UserProfilePage';
 import SearchPage from './pages/SearchPage';
 import ItineraryViewPage from './pages/ItineraryViewPage';
 import CommunityPage from './pages/CommunityPage';
+import CalendarPage from './pages/CalendarPage';
+import AdminDashboard from './pages/AdminDashboard';
 import ProtectedRoute from './components/ProtectedRoute';
 import Layout from './components/Layout';
 import { ToastProvider } from './context/ToastContext';
@@ -37,6 +39,8 @@ function App() {
                   <Route path="/profile" element={<UserProfilePage />} />
                   <Route path="/my-trips" element={<UserTripsPage />} />
                   <Route path="/create-trip" element={<CreateTrip />} />
+                  <Route path="/calendar" element={<CalendarPage />} />
+                  <Route path="/admin" element={<AdminDashboard />} />
                </Route>
             </Route>
 

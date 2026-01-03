@@ -1,52 +1,44 @@
-import axios from 'axios';
+import api from './api';
 
-const API_URL = 'http://localhost:5000/api/trips';
-
-const authHeader = () => {
-  const token = localStorage.getItem('token');
-  if (token && token !== 'undefined' && token !== 'null') {
-    return { Authorization: 'Bearer ' + token };
-  } else {
-    return {};
-  }
-};
+const BASE_URL = '/trips';
 
 export const createTrip = async (tripData) => {
-  const response = await axios.post(API_URL + '/', tripData, { headers: authHeader() });
+  const response = await api.post(BASE_URL + '/', tripData);
   return response.data;
 };
 
 export const getUserTrips = async () => {
-  const response = await axios.get(API_URL + '/', { headers: authHeader() });
+  const response = await api.get(BASE_URL + '/');
   return response.data;
 };
 
 export const getTrip = async (id) => {
-  const response = await axios.get(API_URL + `/${id}`, { headers: authHeader() });
+  const response = await api.get(BASE_URL + `/${id}`);
   return response.data;
 };
 
 export const updateTrip = async (id, tripData) => {
-  const response = await axios.put(API_URL + `/${id}`, tripData, { headers: authHeader() });
+  const response = await api.put(BASE_URL + `/${id}`, tripData);
   return response.data;
 };
 
 export const deleteTrip = async (id) => {
-  const response = await axios.delete(API_URL + `/${id}`, { headers: authHeader() });
+  const response = await api.delete(BASE_URL + `/${id}`);
   return response.data;
 };
 
 export const getDestinations = async () => {
-  const response = await axios.get(API_URL + '/destinations', { headers: authHeader() });
+  const response = await api.get(BASE_URL + '/destinations');
   return response.data;
 };
 
 export const getPublicTrips = async () => {
-  const response = await axios.get(API_URL + '/public');
+  const response = await api.get(BASE_URL + '/public');
   return response.data;
 };
 
 export const duplicateTrip = async (id) => {
-  const response = await axios.post(API_URL + `/${id}/copy`, {}, { headers: authHeader() });
+  const response = await api.post(BASE_URL + `/${id}/copy`, {});
   return response.data;
 };
+

@@ -60,6 +60,15 @@ const Layout = () => {
                          My Trips
                      </Button>
                  )}
+                 {isAuthenticated && (
+                     <Button 
+                        color="inherit" 
+                        onClick={() => navigate('/calendar')}
+                        sx={{ textTransform: 'none', color: '#475569', fontWeight: 500, borderRadius: '8px' }}
+                     >
+                         Calendar
+                     </Button>
+                 )}
                  <Button 
                     color="inherit" 
                     onClick={() => navigate('/community')}
@@ -74,6 +83,15 @@ const Layout = () => {
                  >
                      Explore
                  </Button>
+                 {isAuthenticated && user?.username === 'admin_traveler' && (
+                     <Button 
+                        color="inherit" 
+                        onClick={() => navigate('/admin')}
+                        sx={{ textTransform: 'none', color: '#ef4444', fontWeight: 600, borderRadius: '8px' }}
+                     >
+                         Admin
+                     </Button>
+                 )}
             </div>
 
           <div>
@@ -139,6 +157,14 @@ const Layout = () => {
                          <MenuItem key="mytrips" onClick={() => { navigate('/my-trips'); handleClose(); }}>
                             <Plane fontSize="small" className="mr-2 text-gray-500"/> My Trips
                         </MenuItem>,
+                         <MenuItem key="calendar" onClick={() => { navigate('/calendar'); handleClose(); }}>
+                            <span className="text-gray-500 mr-2 text-lg">📅</span> Calendar
+                        </MenuItem>,
+                        (user?.username === 'admin_traveler' ? (
+                            <MenuItem key="admin" onClick={() => { navigate('/admin'); handleClose(); }}>
+                                <span className="text-red-500 mr-2 text-lg">🛡️</span> Admin Panel
+                            </MenuItem>
+                        ) : null),
                         <MenuItem key="logout" onClick={handleLogout}>
                             <LogoutIcon fontSize="small" className="mr-2 text-gray-500"/> Logout
                         </MenuItem>

@@ -13,6 +13,7 @@ const UserTripsPage = () => {
     const [allTrips, setAllTrips] = useState([]);
     const [loading, setLoading] = useState(true);
     const [tabValue, setTabValue] = useState(0); // 0=Ongoing, 1=Upcoming, 2=Completed
+    const [searchQuery, setSearchQuery] = useState('');
 
     useEffect(() => {
         const loadData = async () => {
@@ -33,38 +34,51 @@ const UserTripsPage = () => {
 
     // Simple filtering logic (Mock logic since DB date filtering isn't perfect yet)
     // In a real app, backend should sort this or we compare dates carefully
+    // Simple filtering logic
     const now = new Date();
+    // Reset time to start of day for accurate day-comparison
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     
     const ongoingTrips = allTrips.filter(t => {
         if (!t.start_date || !t.end_date) return false;
-        return new Date(t.start_date) <= now && new Date(t.end_date) >= now;
+        const start = new Date(t.start_date);
+        const end = new Date(t.end_date);
+        return start <= today && end >= today;
     });
 
     const upcomingTrips = allTrips.filter(t => {
-        // If no date, assume upcoming for now or keep in a separate "draft" pile
-        if (!t.start_date) return true; 
-        return new Date(t.start_date) > now;
+        if (!t.start_date) return true; // Drafts/TBD considered upcoming
+        const start = new Date(t.start_date);
+        return start > today;
     });
 
     const completedTrips = allTrips.filter(t => {
         if (!t.end_date) return false;
-        return new Date(t.end_date) < now;
+        const end = new Date(t.end_date);
+        return end < today;
     });
 
     // Map tab index to data
     const getTabTrips = () => {
         switch(tabValue) {
-            case 0: return ongoingTrips.length > 0 ? ongoingTrips : upcomingTrips; // Fallback to upcoming if no ongoing for UX
+            case 0: return ongoingTrips; 
             case 1: return upcomingTrips;
             case 2: return completedTrips;
             default: return allTrips;
         }
     };
 
-    const displayTrips = getTabTrips();
+    // Search Logic: If searching, search ALL trips. Else, use Tab.
+    const searchResults = allTrips.filter(t => 
+        t.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+        (t.description && t.description.toLowerCase().includes(searchQuery.toLowerCase()))
+    );
+
+    const displayTrips = searchQuery ? searchResults : getTabTrips();
 
     const handleTabChange = (event, newValue) => {
         setTabValue(newValue);
+        setSearchQuery(''); // Clear search when switching tabs manually
     };
 
     return (
@@ -100,7 +114,13 @@ const UserTripsPage = () => {
                     </Box>
                     <div className="relative w-full md:w-64 mr-4">
                         <Search className="absolute left-3 top-2.5 text-gray-400" size={18} />
-                        <input type="text" placeholder="Search trips..." className="w-full pl-10 pr-4 py-2 bg-gray-50 rounded-lg border-none outline-none focus:ring-2 ring-blue-100 transition-all"/>
+                        <input 
+                            type="text" 
+                            placeholder="Search all trips..." 
+                            className="w-full pl-10 pr-4 py-2 bg-gray-50 rounded-lg border-none outline-none focus:ring-2 ring-blue-100 transition-all"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                        />
                     </div>
                 </div>
 

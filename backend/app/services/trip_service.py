@@ -83,8 +83,8 @@ class TripService:
         new_trip = Trip(
             user_id=user_id,
             title=f"Copy of {original_trip.title}",
-            start_date=None, # User should set dates
-            end_date=None,
+            start_date=original_trip.start_date, 
+            end_date=original_trip.end_date,
             description=original_trip.description,
             budget_limit=original_trip.budget_limit,
             distance=original_trip.distance,
@@ -114,8 +114,18 @@ class TripService:
                     description=original_act.description,
                     cost=original_act.cost,
                     start_time=original_act.start_time,
-                    end_time=original_act.end_time
+                    end_time=original_act.end_time,
+                    location=original_act.location,
+                    image_url=original_act.image_url,
+                    location_lat=original_act.location_lat,
+                    location_lng=original_act.location_lng,
+                    booking_ref=original_act.booking_ref
                 )
+                
+                # Copy tags
+                for tag in original_act.tags:
+                    new_act.tags.append(tag)
+                    
                 db.session.add(new_act)
 
         db.session.commit()

@@ -47,11 +47,30 @@ const CommunityPage = () => {
     };
 
     const handleFilter = (filters) => {
-        const { minBudget, maxBudget, minDistance, maxDistance } = filters;
+        const { minBudget, maxBudget, minDistance, maxDistance, date } = filters;
         const result = trips.filter(trip => {
             const cost = trip.budget_limit || 0;
             const dist = trip.distance || 0;
-            return cost >= minBudget && cost <= maxBudget && dist >= minDistance && dist <= maxDistance;
+            
+            let dateMatch = true;
+            if (date) {
+                if (!trip.start_date) {
+                    dateMatch = false; 
+                } else {
+                    const searchDate = new Date(date);
+                    const start = new Date(trip.start_date);
+                    const end = trip.end_date ? new Date(trip.end_date) : start;
+                    
+                    // Reset time for date-only comparison
+                    searchDate.setHours(0,0,0,0);
+                    start.setHours(0,0,0,0);
+                    end.setHours(0,0,0,0);
+                    
+                    dateMatch = searchDate >= start && searchDate <= end;
+                }
+            }
+
+            return cost >= minBudget && cost <= maxBudget && dist >= minDistance && dist <= maxDistance && dateMatch;
         });
         setFilteredTrips(result);
     };
