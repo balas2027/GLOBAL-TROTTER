@@ -1,0 +1,36 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #3B82F6;
+  --color-secondary: #F59E0B;
+  --color-dark: #1E293B;
+  --color-light: #F8FAFC;
+  --color-glass: rgba(255, 255, 255, 0.1);
+  --color-glassBorder: rgba(255, 255, 255, 0.2);
+  
+  --font-sans: 'Inter', sans-serif;
+  --backdrop-blur-xs: 2px;
+}
+
+@layer base {
+  body {
+    @apply bg-slate-50 text-slate-900 font-sans;
+  }
+}
+
+.glass-panel {
+  @apply bg-white/70 backdrop-blur-lg border border-white/50 shadow-xl rounded-2xl;
+}
+
+.input-field {
+  @apply w-full px-4 py-3 rounded-lg border border-gray-200 outline-none transition-all duration-200 bg-white/50;
+}
+
+/* Explicit focus styles to avoid complex @apply issues if they persist */
+.input-field:focus {
+    @apply border-primary ring-2 ring-primary/20;
+}
+
+.btn-primary {
+  @apply w-full bg-primary text-white font-semibold py-3 rounded-lg hover:bg-blue-600 transition-colors shadow-lg shadow-blue-500/30;
+}
