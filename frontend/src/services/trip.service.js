@@ -40,3 +40,13 @@ export const getDestinations = async () => {
   const response = await axios.get(API_URL + '/destinations', { headers: authHeader() });
   return response.data;
 };
+
+export const getPublicTrips = async () => {
+  const response = await axios.get(API_URL + '/public');
+  return response.data;
+};
+
+export const duplicateTrip = async (id) => {
+  const response = await axios.post(API_URL + `/${id}/copy`, {}, { headers: authHeader() });
+  return response.data;
+};

@@ -21,9 +21,11 @@ def create_app(config_class=Config):
     # Blueprints
     from app.routes.auth import auth_bp
     from app.routes.trips import trips_bp
+    from app.routes.itineraries import itinerary_bp
     
     app.register_blueprint(auth_bp, url_prefix='/api/auth')
     app.register_blueprint(trips_bp, url_prefix='/api/trips')
+    app.register_blueprint(itinerary_bp, url_prefix='/api/itineraries')
 
     @app.route('/health')
     def health_check():

@@ -12,7 +12,8 @@ class TripService:
             end_date=datetime.strptime(data.get('end_date'), '%Y-%m-%d').date() if data.get('end_date') else None,
             description=data.get('description'),
             budget_limit=data.get('budget_limit'),
-            visibility=int(data.get('visibility', 0)), # Ensure int
+            distance=data.get('distance', 0.0),
+            visibility=str(data.get('visibility', '0')), # Ensure string
             cover_image=data.get('cover_image')
         )
         db.session.add(new_trip)
@@ -22,6 +23,10 @@ class TripService:
     @staticmethod
     def get_user_trips(user_id):
         return Trip.query.filter_by(user_id=user_id).order_by(Trip.start_date.asc()).all()
+
+    @staticmethod
+    def get_public_trips():
+        return Trip.query.filter_by(visibility='1').order_by(Trip.created_at.desc()).limit(12).all()
     
     @staticmethod
     def get_public_destinations():
@@ -36,7 +41,7 @@ class TripService:
         if not trip:
             return None
             
-        if trip.user_id != user_id and trip.visibility != 1:
+        if trip.user_id != user_id and trip.visibility != '1':
             return None 
         return trip
 
@@ -49,7 +54,8 @@ class TripService:
         if 'title' in data: trip.title = data['title']
         if 'description' in data: trip.description = data['description']
         if 'budget_limit' in data: trip.budget_limit = data['budget_limit']
-        if 'visibility' in data: trip.visibility = int(data['visibility'])
+        if 'distance' in data: trip.distance = data['distance']
+        if 'visibility' in data: trip.visibility = str(data['visibility'])
         if 'cover_image' in data: trip.cover_image = data['cover_image']
         if 'start_date' in data and data['start_date']: trip.start_date = datetime.strptime(data['start_date'], '%Y-%m-%d').date()
         if 'end_date' in data and data['end_date']: trip.end_date = datetime.strptime(data['end_date'], '%Y-%m-%d').date()
@@ -66,3 +72,51 @@ class TripService:
         db.session.delete(trip)
         db.session.commit()
         return True
+
+    @staticmethod
+    def duplicate_trip(trip_id, user_id):
+        original_trip = Trip.query.filter_by(id=trip_id).first()
+        if not original_trip:
+            return None
+            
+        # 1. Copy Trip
+        new_trip = Trip(
+            user_id=user_id,
+            title=f"Copy of {original_trip.title}",
+            start_date=None, # User should set dates
+            end_date=None,
+            description=original_trip.description,
+            budget_limit=original_trip.budget_limit,
+            distance=original_trip.distance,
+            visibility='0', # Always private copy
+            cover_image=original_trip.cover_image
+        )
+        db.session.add(new_trip)
+        db.session.flush() # get ID
+
+        # 2. Copy Itineraries (Sections)
+        from app.models.itinerary import Itinerary, Activity
+        for original_itin in original_trip.itineraries:
+            new_itin = Itinerary(
+                trip_id=new_trip.id,
+                day_number=original_itin.day_number,
+                notes=original_itin.notes
+            )
+            db.session.add(new_itin)
+            db.session.flush()
+
+            # 3. Copy Activities
+            for original_act in original_itin.activities:
+                new_act = Activity(
+                    itinerary_id=new_itin.id,
+                    type=original_act.type,
+                    title=original_act.title,
+                    description=original_act.description,
+                    cost=original_act.cost,
+                    start_time=original_act.start_time,
+                    end_time=original_act.end_time
+                )
+                db.session.add(new_act)
+
+        db.session.commit()
+        return new_trip

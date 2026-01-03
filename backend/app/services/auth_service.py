@@ -21,7 +21,9 @@ class AuthService:
             first_name=data.get('first_name'),
             last_name=data.get('last_name'),
             city=data.get('city'),
-            country=data.get('country')
+            country=data.get('country'),
+            phone=data.get('phone'),
+            bio=data.get('bio')
         )
         user.set_password(password)
         

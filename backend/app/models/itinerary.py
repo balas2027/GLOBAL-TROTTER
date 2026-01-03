@@ -38,6 +38,8 @@ class Activity(db.Model):
     cost = db.Column(db.Float, default=0.0)
     location_lat = db.Column(db.Float)
     location_lng = db.Column(db.Float)
+    location = db.Column(db.String(255))
+    image_url = db.Column(db.String(500))
     booking_ref = db.Column(db.String(100))
     
     tags = db.relationship('Tag', secondary=activity_tags, backref=db.backref('activities', lazy='dynamic'))
@@ -51,6 +53,8 @@ class Activity(db.Model):
             'start_time': self.start_time.strftime('%H:%M') if self.start_time else None,
             'end_time': self.end_time.strftime('%H:%M') if self.end_time else None,
             'cost': self.cost,
+            'location': self.location,
+            'image_url': self.image_url,
             'tags': [t.name for t in self.tags]
         }
 

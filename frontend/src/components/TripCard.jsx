@@ -1,9 +1,9 @@
-import { Calendar, MapPin, ArrowRight } from 'lucide-react';
+import { Calendar, MapPin, ArrowRight, Copy } from 'lucide-react';
 import { Card, CardMedia, CardContent, Typography, Button, Box, Chip } from '@mui/material';
 
-const TripCard = ({ trip, onClick }) => {
-  const startDate = new Date(trip.start_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-  const endDate = new Date(trip.end_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+const TripCard = ({ trip, onClick, onClone }) => {
+  const startDate = trip.start_date ? new Date(trip.start_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : 'TBD';
+  const endDate = trip.end_date ? new Date(trip.end_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '';
 
   return (
     <Card 
@@ -21,7 +21,7 @@ const TripCard = ({ trip, onClick }) => {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60" />
         <div className="absolute top-3 right-3">
-             <Chip label={trip.visibility || 'Private'} size="small" sx={{ bgcolor: 'white', color: 'black', fontWeight: 'bold' }} />
+             <Chip label={trip.visibility === '1' ? 'Public' : 'Private'} size="small" sx={{ bgcolor: 'white', color: 'black', fontWeight: 'bold' }} />
         </div>
       </div>
 
@@ -45,13 +45,25 @@ const TripCard = ({ trip, onClick }) => {
              <Box display="flex" alignItems="center">
                 {/* Placeholder for collaborator avatars */}
              </Box>
-             <Button 
-                size="small" 
-                endIcon={<ArrowRight size={16} />}
-                sx={{ textTransform: 'none', fontWeight: 'bold', color: '#3B82F6' }}
-             >
-                View Plan
-             </Button>
+             <div className="flex gap-2">
+                  {onClone && trip.visibility === '1' && (
+                     <Button 
+                        size="small" 
+                        startIcon={<Copy size={16} />}
+                        onClick={(e) => { e.stopPropagation(); onClone(trip); }}
+                        sx={{ textTransform: 'none', color: '#10b981', borderColor: '#10b981' }}
+                     >
+                        Add
+                     </Button>
+                  )}
+                 <Button 
+                    size="small" 
+                    endIcon={<ArrowRight size={16} />}
+                    sx={{ textTransform: 'none', fontWeight: 'bold', color: '#3B82F6' }}
+                 >
+                    View
+                 </Button>
+             </div>
         </div>
       </CardContent>
     </Card>

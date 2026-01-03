@@ -1,36 +1,50 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import Login from './pages/Login';
-import Signup from './pages/Signup';
 import Dashboard from './pages/Dashboard';
-import Profile from './pages/Profile';
 import CreateTrip from './pages/CreateTrip';
+import TripDetails from './pages/TripDetails';
+import UserTripsPage from './pages/UserTripsPage';
+import UserProfilePage from './pages/UserProfilePage';
+import SearchPage from './pages/SearchPage';
+import ItineraryViewPage from './pages/ItineraryViewPage';
+import CommunityPage from './pages/CommunityPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import Layout from './components/Layout';
 import { ToastProvider } from './context/ToastContext';
+import { AuthProvider } from './context/AuthContext';
+import AuthModal from './components/Auth/AuthModal';
 
 function App() {
   return (
-    <ToastProvider>
-      <Router>
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          
-          {/* Protected Routes inside Layout */}
-          <Route element={<ProtectedRoute />}>
-             <Route element={<Layout />}>
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/profile" element={<Profile />} />
-                <Route path="/create-trip" element={<CreateTrip />} />
-                {/* Trip Details with Username */}
-                <Route path="/:username/trip/:tripId" element={<div className="p-10 text-center">Trip Details Coming in Phase 4</div>} />
-             </Route>
-          </Route>
+    <AuthProvider>
+      <ToastProvider>
+        <Router>
+          <AuthModal />
+          <Routes>
+            {/* Public Routes inside Layout */}
+            <Route element={<Layout />}>
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/search" element={<SearchPage />} />
+              <Route path="/community" element={<CommunityPage />} />
+              {/* Trip Details might be public */}
+              <Route path="/trip/:tripId" element={<TripDetails />} />
+              <Route path="/:username/trip/:tripId" element={<TripDetails />} />
+              <Route path="/trip/:tripId/itinerary" element={<ItineraryViewPage />} />
+            </Route>
 
-          <Route path="/" element={<Navigate to="/login" />} />
-        </Routes>
-      </Router>
-    </ToastProvider>
+            {/* Protected Routes inside Layout */}
+            <Route element={<ProtectedRoute />}>
+               <Route element={<Layout />}>
+                  <Route path="/profile" element={<UserProfilePage />} />
+                  <Route path="/my-trips" element={<UserTripsPage />} />
+                  <Route path="/create-trip" element={<CreateTrip />} />
+               </Route>
+            </Route>
+
+            <Route path="/" element={<Navigate to="/dashboard" />} />
+          </Routes>
+        </Router>
+      </ToastProvider>
+    </AuthProvider>
   );
 }
 
