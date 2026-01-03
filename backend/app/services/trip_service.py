@@ -32,7 +32,7 @@ class TripService:
     def get_public_destinations():
         # Fetch seeded destinations, or public trips (using destinations table for now)
         from app.models.destination import Destination
-        return Destination.query.limit(4).all()
+        return Destination.query.limit(20).all()
 
     @staticmethod
     def get_trip(trip_id, user_id):

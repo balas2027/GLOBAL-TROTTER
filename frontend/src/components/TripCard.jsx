@@ -1,9 +1,14 @@
-import { Calendar, MapPin, ArrowRight, Copy } from 'lucide-react';
-import { Card, CardMedia, CardContent, Typography, Button, Box, Chip } from '@mui/material';
+import { Calendar, MapPin, ArrowRight, Copy, BadgeCheck } from 'lucide-react';
+import { Card, CardMedia, CardContent, Typography, Button, Box, Chip, Avatar } from '@mui/material';
 
 const TripCard = ({ trip, onClick, onClone }) => {
   const startDate = trip.start_date ? new Date(trip.start_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : 'TBD';
   const endDate = trip.end_date ? new Date(trip.end_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '';
+
+  // Determine author display name
+  const author = trip.author;
+  const isOfficialTrip = author && author.username === 'admin';
+  const authorDisplayName = isOfficialTrip ? 'VibeHolidays' : (author?.first_name || author?.username || 'Unknown');
 
   return (
     <Card 
@@ -42,8 +47,25 @@ const TripCard = ({ trip, onClick, onClone }) => {
         </Typography>
 
         <div className="flex items-center justify-between mt-auto pt-3 border-t border-gray-100">
-             <Box display="flex" alignItems="center">
-                {/* Placeholder for collaborator avatars */}
+             {/* Author Display */}
+             <Box display="flex" alignItems="center" gap={1}>
+                {isOfficialTrip ? (
+                    <div className="flex items-center gap-1 bg-blue-50 px-2 py-1 rounded-full">
+                        <Avatar sx={{ width: 20, height: 20, bgcolor: '#3B82F6', fontSize: '0.7rem' }}>V</Avatar>
+                        <span className="text-xs font-semibold text-blue-600">VibeHolidays</span>
+                        <BadgeCheck size={14} className="text-blue-500" />
+                    </div>
+                ) : author ? (
+                    <div className="flex items-center gap-1 text-xs text-gray-500">
+                        <Avatar 
+                            src={author.avatar_url} 
+                            sx={{ width: 20, height: 20, fontSize: '0.6rem' }}
+                        >
+                            {authorDisplayName[0]?.toUpperCase()}
+                        </Avatar>
+                        <span>{authorDisplayName}</span>
+                    </div>
+                ) : null}
              </Box>
              <div className="flex gap-2">
                   {onClone && trip.visibility === '1' && (
@@ -71,3 +93,4 @@ const TripCard = ({ trip, onClick, onClone }) => {
 };
 
 export default TripCard;
+

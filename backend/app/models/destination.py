@@ -9,6 +9,7 @@ class Destination(db.Model):
     image_url = db.Column(db.String(256))
     currency = db.Column(db.String(10))
     cost_index = db.Column(db.Float) # 1.0 = Average, >1 Expensive
+    category = db.Column(db.String(50)) # e.g. beach, mountain, city, food
     
     def to_dict(self):
         return {
@@ -18,5 +19,6 @@ class Destination(db.Model):
             'description': self.description,
             'image_url': self.image_url,
             'currency': self.currency,
-            'cost_index': self.cost_index
+            'cost_index': self.cost_index,
+            'category': self.category
         }

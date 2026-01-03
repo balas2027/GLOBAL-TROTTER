@@ -80,11 +80,11 @@ const AuthModal = () => {
             maxWidth={authMode === 'signup' ? 'sm' : 'xs'} 
             fullWidth
             PaperProps={{
-                style: { borderRadius: '24px', overflow: 'hidden' }
+                style: { borderRadius: '24px', overflow: 'hidden', margin: '16px', maxHeight: '90vh' }
             }}
         >
-            <div className="relative bg-white overflow-hidden">
-                <DialogContent sx={{ p: 4 }}>
+            <div className="relative bg-white overflow-hidden flex flex-col h-full">
+                <DialogContent sx={{ p: 4, overflowY: 'auto' }} className="custom-scrollbar">
                     <div className="flex justify-end absolute top-4 right-4 z-10">
                          <IconButton onClick={closeAuthModal} size="small" className="hover:bg-slate-100 rounded-full">
                             <X size={20} className="text-gray-500" />

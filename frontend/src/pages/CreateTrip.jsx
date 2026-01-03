@@ -12,7 +12,7 @@ const CreateTrip = () => {
     const [loading, setLoading] = useState(false);
     
     const { user } = useAuth();
-    const isAdmin = user?.username === 'admin_traveler';
+    const isAdmin = user?.username === 'admin' || user?.username === 'admin_traveler';
 
     // Suggestion Places from Wireframe Screen 4
     const suggestions = [

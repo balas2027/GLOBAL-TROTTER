@@ -11,7 +11,7 @@ admin_bp = Blueprint('admin', __name__)
 def is_admin(user_id):
     user = User.query.get(user_id)
     # Hardcoded admin check for simplicity, or check a role column if it exists
-    return user and user.username == 'admin_traveler'
+    return user and user.username == 'admin'
 
 @admin_bp.route('/stats', methods=['GET'])
 @jwt_required()
@@ -49,13 +49,8 @@ def get_trip_trends():
         return jsonify({'error': 'Unauthorized'}), 403
 
     # Group trips by creation month (using start_date as proxy for activity period)
-    # SQLite specific date formatting might differ, assuming Postgres for production but dev is likely SQLite.
-    # We'll use a simpler Python-side aggregation for safety if DB is uncertain, or try generic SQL.
-    # Let's just fetch all start_dates and process in Python for this scale.
-    
     trips = Trip.query.with_entities(Trip.start_date).all()
     from collections import Counter
-    from datetime import datetime
     
     dates = [t.start_date.strftime('%Y-%m') for t in trips if t.start_date]
     counts = Counter(dates)
@@ -72,15 +67,49 @@ def get_popular_cities():
     if not is_admin(current_user_id):
         return jsonify({'error': 'Unauthorized'}), 403
         
-    # Aggregate cities from Trips (destination)
-    # destinations is a text field, potentially comma-separated? 
-    # Current model doesn't strictly normalize destinations. 
-    # Let's count by 'destination' column grouping.
-    
-    results = db.session.query(Trip.destination, func.count(Trip.id).label('count')) \
-        .group_by(Trip.destination) \
+    # Aggregate stats from Activities (location) since Trip doesn't have destination column
+    results = db.session.query(Activity.location, func.count(Activity.id).label('count')) \
+        .filter(Activity.location != None) \
+        .group_by(Activity.location) \
         .order_by(desc('count')) \
         .limit(5) \
         .all()
         
     return jsonify([{'name': r[0], 'value': r[1]} for r in results])
+
+@admin_bp.route('/trips', methods=['GET'])
+@jwt_required()
+def get_all_public_trips():
+    """Get all public trips for admin management."""
+    current_user_id = get_jwt_identity()
+    if not is_admin(current_user_id):
+        return jsonify({'error': 'Unauthorized'}), 403
+    
+    # Get all public trips
+    trips = Trip.query.filter(Trip.visibility == '1').order_by(Trip.created_at.desc()).all()
+    
+    result = []
+    for trip in trips:
+        trip_data = trip.to_dict()
+        author = User.query.get(trip.user_id)
+        trip_data['author'] = author.to_dict() if author else None
+        result.append(trip_data)
+    
+    return jsonify(result)
+
+@admin_bp.route('/trips/<int:trip_id>', methods=['DELETE'])
+@jwt_required()
+def delete_trip(trip_id):
+    """Admin can delete any public trip."""
+    current_user_id = get_jwt_identity()
+    if not is_admin(current_user_id):
+        return jsonify({'error': 'Unauthorized'}), 403
+    
+    trip = Trip.query.get(trip_id)
+    if not trip:
+        return jsonify({'error': 'Trip not found'}), 404
+    
+    db.session.delete(trip)
+    db.session.commit()
+    
+    return jsonify({'message': 'Trip deleted successfully'}), 200

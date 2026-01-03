@@ -30,8 +30,15 @@ def get_trips():
 @trips_bp.route('/public', methods=['GET'])
 def get_public_trips():
     try:
+        from app.models.user import User
         trips = TripService.get_public_trips()
-        return jsonify([t.to_dict() for t in trips]), 200
+        result = []
+        for t in trips:
+            trip_data = t.to_dict()
+            author = User.query.get(t.user_id)
+            trip_data['author'] = author.to_dict() if author else None
+            result.append(trip_data)
+        return jsonify(result), 200
     except Exception as e:
         print(f"Error getting public trips: {e}")
         return jsonify({'error': str(e)}), 500

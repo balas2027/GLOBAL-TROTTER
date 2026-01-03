@@ -83,7 +83,7 @@ const Layout = () => {
                  >
                      Explore
                  </Button>
-                 {isAuthenticated && user?.username === 'admin_traveler' && (
+                 {isAuthenticated && (user?.username === 'admin' || user?.username === 'admin_traveler') && (
                      <Button 
                         color="inherit" 
                         onClick={() => navigate('/admin')}
@@ -160,7 +160,7 @@ const Layout = () => {
                          <MenuItem key="calendar" onClick={() => { navigate('/calendar'); handleClose(); }}>
                             <span className="text-gray-500 mr-2 text-lg">📅</span> Calendar
                         </MenuItem>,
-                        (user?.username === 'admin_traveler' ? (
+                        ((user?.username === 'admin' || user?.username === 'admin_traveler') ? (
                             <MenuItem key="admin" onClick={() => { navigate('/admin'); handleClose(); }}>
                                 <span className="text-red-500 mr-2 text-lg">🛡️</span> Admin Panel
                             </MenuItem>
