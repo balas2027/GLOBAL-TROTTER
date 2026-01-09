@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://global-trotter.vercel.app/api/auth';
+const API_URL = 'https://global-trotter.vercel.app/api/auth';
 
 export const login = async (email, password) => {
   const response = await axios.post(`${API_URL}/login`, { email, password });

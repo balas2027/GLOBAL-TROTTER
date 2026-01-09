@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://global-trotter.vercel.app/api/itineraries';
+const API_URL = 'https://global-trotter.vercel.app/api/itineraries';
 
 const authHeader = () => {
   const token = localStorage.getItem('token');
