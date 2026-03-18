@@ -7,13 +7,6 @@ trips_bp = Blueprint('trips', __name__)
 
 
 
-@trips_bp.route('/', methods=['GET'])
-def welcome():
-    return jsonify({
-        "message": "Welcome to Vibwe Holidays"
-    }), 200
-
-
 @trips_bp.errorhandler(HTTPException)
 def handle_exception(e):
     return jsonify({'error': e.description}), e.code
